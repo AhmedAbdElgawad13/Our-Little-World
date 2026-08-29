@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Our Little World ❤️</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Poppins:wght@400;600;700&display=swap');
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  min-height:100vh;
+  font-family:'Poppins','Cairo',sans-serif;
+  background:linear-gradient(135deg,#ffe4ef,#eadcff,#fff7fb);
+  color:#3d2940;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+}
+.hearts{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+.heart{
+  position:absolute;bottom:-40px;font-size:22px;opacity:.65;
+  animation:float 8s linear infinite;
+}
+@keyframes float{
+  0%{transform:translateY(0) rotate(0deg);opacity:0}
+  15%{opacity:.7}
+  100%{transform:translateY(-110vh) rotate(360deg);opacity:0}
+}
+.container{
+  width:min(92%,560px);
+  position:relative;z-index:2;
+}
+.card{
+  background:rgba(255,255,255,.72);
+  backdrop-filter:blur(18px);
+  border:1px solid rgba(255,255,255,.8);
+  border-radius:28px;
+  padding:38px 30px;
+  box-shadow:0 20px 60px rgba(100,55,100,.18);
+  text-align:center;
+}
+.heart-logo{font-size:58px;margin-bottom:8px;animation:pulse 1.8s infinite}
+@keyframes pulse{50%{transform:scale(1.12)}}
+h1{font-size:30px;margin-bottom:8px}
+.subtitle{color:#806b7d;margin-bottom:26px}
+input,textarea{
+  width:100%;border:2px solid #ead8e7;background:#fff9fc;
+  border-radius:15px;padding:14px 16px;font:inherit;outline:none;
+  transition:.25s;margin-bottom:14px;
+}
+input:focus,textarea:focus{border-color:#c98bb3;box-shadow:0 0 0 4px rgba(201,139,179,.12)}
+textarea{resize:vertical;min-height:110px}
+button{
+  border:0;border-radius:15px;padding:14px 22px;
+  background:linear-gradient(135deg,#c96fa4,#8f70c9);
+  color:white;font:600 15px inherit;cursor:pointer;
+  box-shadow:0 10px 24px rgba(143,112,201,.25);
+  transition:.2s;
+}
+button:hover{transform:translateY(-2px);box-shadow:0 14px 28px rgba(143,112,201,.3)}
+button:active{transform:scale(.97)}
+.error{color:#c44c70;font-size:14px;min-height:22px;margin-bottom:8px}
+.progress{font-size:13px;color:#987c94;margin-bottom:10px}
+.question{font-size:23px;font-weight:700;line-height:1.4;margin:12px 0 24px}
+.answers{display:grid;gap:10px;margin-bottom:18px}
+.answer{
+  background:white;color:#5d4660;border:2px solid #ecdce9;
+  box-shadow:none;text-align:left;
+}
+.answer:hover{border-color:#c98bb3;background:#fff7fb}
+.nav{display:flex;justify-content:center;gap:10px}
+.small{font-size:13px;color:#967f91;margin-top:18px}
+.hidden{display:none!important}
+.final-message{
+  background:rgba(255,245,250,.8);padding:20px;border-radius:18px;
+  line-height:1.8;margin:20px 0;
+}
+.signature{margin-top:16px;font-weight:700}
+.fade{animation:fade .45s ease}
+@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+<div class="hearts" id="hearts"></div>
+
+<div class="container">
+  <section class="card" id="login">
+    <div class="heart-logo">❤️</div>
+    <h1>Our Little World</h1>
+    <p class="subtitle">A tiny place made just for you, Mero 7abibty 💕</p>
+    <input id="password" type="password" placeholder="Enter our secret password 🔐">
+    <div class="error" id="error"></div>
+    <button onclick="enterWorld()">Enter ❤️</button>
+    <p class="small">Made with love by Ahmed Abdelgawad</p>
+  </section>
+
+  <section class="card hidden" id="quiz">
+    <div class="heart-logo" style="font-size:42px">💗</div>
+    <h1>Welcome, Mero 7abibty</h1>
+    <p class="subtitle">Let's see how well you know our little story...</p>
+    <div id="questionBox"></div>
+  </section>
+
+  <section class="card hidden" id="final">
+    <div class="heart-logo">💌</div>
+    <h1>You reached the end ❤️</h1>
+    <div class="final-message">
+      No matter how many questions I ask you, there will never be enough
+      questions to describe how much you mean to me. ❤️<br><br>
+      Every little moment with you becomes a memory I want to keep forever.
+      I don't need a perfect story — I just want our story, with all its
+      laughs, silly moments, arguments, and beautiful days. 🥹💕
+      <div class="signature">— Ahmed Abdelgawad ❤️</div>
+    </div>
+    <button onclick="reveal()">One More Thing 💌</button>
+    <div id="extra" class="final-message hidden fade">
+      If I had to choose you again, I would choose you every single time.
+      Thank you for being part of my life. ❤️<br><br>
+      <strong>You're not just my favorite person… you're my favorite part of every day. 💗</strong>
+    </div>
+  </section>
+</div>
+
+<script>
+/* =========================
+   EASY SETTINGS TO EDIT
+   ========================= */
+const PASSWORD = "552006";
+const GIRLFRIEND_NAME = "Mero 7abibty";
+
+// Google Apps Script Web App URL
+const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbz0WxB0EiVJfKMbYUcT9fzeYG8lc4GKWKwiplfbGrKaaFPzRv57qD7Y5aJrGtxN66oiwA/exec";
+
+const questions = [
+  {
+    q:"What was the first thing you noticed about Ahmed? ❤️",
+    type:"text"
+  },
+  {
+    q:"What is your favorite memory with Ahmed?",
+    type:"text"
+  },
+  {
+    q:"What is the thing you love most about Ahmed? 💕",
+    type:"text"
+  },
+  {
+    q:"Who gets jealous more? 😂",
+    type:"choice",
+    options:["Ahmed 😂","Mero 😌","Both of us 😭❤️","Neither... we're angels 😇"]
+  },
+  {
+    q:"What is our funniest memory?",
+    type:"text"
+  },
+  {
+    q:"If we could travel anywhere together, where would you choose? ✈️",
+    type:"text"
+  },
+  {
+    q:"What is one thing you want us to do together in the future?",
+    type:"text"
+  },
+  {
+    q:"Describe our relationship in three words. ❤️",
+    type:"text"
+  }
+];
+
+let current = 0;
+let answers = [];
+
+function enterWorld(){
+  const value = document.getElementById("password").value;
+  const error = document.getElementById("error");
+  if(value === PASSWORD){
+    document.getElementById("login").classList.add("hidden");
+    document.getElementById("quiz").classList.remove("hidden");
+    renderQuestion();
+  }else{
+    error.textContent = "Oops! Try again, my love ❤️";
+  }
+}
+
+document.getElementById("password").addEventListener("keydown",e=>{
+  if(e.key==="Enter") enterWorld();
+});
+
+function renderQuestion(){
+  const item = questions[current];
+  const box = document.getElementById("questionBox");
+  let html = `<div class="fade">
+    <div class="progress">Question ${current+1} of ${questions.length}</div>
+    <div class="question">${item.q}</div>`;
+
+  if(item.type === "text"){
+    html += `<textarea id="answer" placeholder="Write your answer here... 💕"></textarea>`;
+  }else{
+    html += `<div class="answers">`;
+    item.options.forEach((opt,i)=>{
+      html += `<button class="answer" onclick="choose(${i})">${opt}</button>`;
+    });
+    html += `</div>`;
+  }
+
+  html += `<div class="nav">`;
+  if(current > 0) html += `<button onclick="previous()">← Back</button>`;
+  if(item.type === "text") html += `<button onclick="next()">Next ❤️</button>`;
+  html += `</div></div>`;
+  box.innerHTML = html;
+}
+
+function choose(i){
+  answers[current] = questions[current].options[i];
+  next();
+}
+
+function next(){
+  const input = document.getElementById("answer");
+  if(input && !input.value.trim()){
+    input.style.borderColor = "#d46b91";
+    input.focus();
+    return;
+  }
+  if(input) answers[current] = input.value.trim();
+
+  if(current < questions.length-1){
+    current++;
+    renderQuestion();
+  }else{
+    submitAnswers();
+  }
+}
+
+function previous(){
+  if(current > 0){ current--; renderQuestion(); }
+}
+
+async function submitAnswers(){
+  const box = document.getElementById("questionBox");
+  box.innerHTML = `
+    <div class="fade">
+      <div class="heart-logo" style="font-size:46px">💌</div>
+      <div class="question">Sending your answers... ❤️</div>
+      <p class="subtitle">Just a little moment...</p>
+    </div>`;
+
+  const payload = {
+    name: GIRLFRIEND_NAME,
+    q1: answers[0] || "",
+    q2: answers[1] || "",
+    q3: answers[2] || "",
+    q4: answers[3] || "",
+    q5: answers[4] || "",
+    q6: answers[5] || "",
+    q7: answers[6] || "",
+    q8: answers[7] || ""
+  };
+
+  try {
+    // Send as URL-encoded form data. This is more reliable from a local HTML file.
+    const form = new URLSearchParams();
+    Object.entries(payload).forEach(([key, value]) => form.append(key, value));
+
+    await fetch(GOOGLE_SHEET_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: {"Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"},
+      body: form.toString()
+    });
+
+    // With no-cors the browser cannot read Google's response, but a successful
+    // request is sent to Apps Script. Show the final page after sending.
+    document.getElementById("quiz").classList.add("hidden");
+    document.getElementById("final").classList.remove("hidden");
+  } catch (err) {
+    box.innerHTML = `
+      <div class="fade">
+        <div class="heart-logo" style="font-size:46px">🥺</div>
+        <div class="question">Something went wrong</div>
+        <p class="subtitle">Please try sending the answers again.</p>
+        <button onclick="submitAnswers()">Try Again ❤️</button>
+      </div>`;
+  }
+}
+
+function reveal(){
+  document.getElementById("extra").classList.remove("hidden");
+}
+
+/* Floating hearts */
+const heartChars=["❤️","💕","💗","💖","💘","💞"];
+for(let i=0;i<24;i++){
+  const h=document.createElement("div");
+  h.className="heart";
+  h.textContent=heartChars[Math.floor(Math.random()*heartChars.length)];
+  h.style.left=Math.random()*100+"%";
+  h.style.animationDelay=Math.random()*8+"s";
+  h.style.animationDuration=(6+Math.random()*6)+"s";
+  h.style.fontSize=(14+Math.random()*18)+"px";
+  document.getElementById("hearts").appendChild(h);
+}
+</script>
+</body>
+</html>
