@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Our Little World</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600&family=Cairo:wght@500;700&family=Parisienne&display=swap');
+
+:root{
+  --ink:#f4ecdd;
+  --ink-dim:#b7a898;
+  --ink-faint:#7d6f63;
+  --night-1:#120c1b;
+  --night-2:#1d1330;
+  --night-3:#0c0813;
+  --gold:#d3a44f;
+  --gold-bright:#e8c274;
+  --rose:#b45a68;
+  --line: rgba(211,164,79,.28);
+  --card: rgba(255,248,235,.045);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+  min-height:100vh;
+  font-family:'Inter',sans-serif;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(180,90,104,.18), transparent),
+    radial-gradient(ellipse 60% 50% at 85% 100%, rgba(211,164,79,.10), transparent),
+    linear-gradient(180deg,var(--night-3),var(--night-1) 40%,var(--night-2));
+  color:var(--ink);
+  display:flex;align-items:center;justify-content:center;
+  padding:32px 18px;
+  position:relative;
+  overflow-x:hidden;
+}
+
+/* ---- starfield ---- */
+.sky{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.star{position:absolute;background:var(--ink);border-radius:50%;animation:twinkle ease-in-out infinite}
+@keyframes twinkle{0%,100%{opacity:.15}50%{opacity:.85}}
+@media (prefers-reduced-motion:reduce){
+  .star{animation:none;opacity:.4}
+}
+
+.container{width:min(94%,520px);position:relative;z-index:2}
+
+.eyebrow{
+  font-family:'Inter',sans-serif;
+  font-size:11px;letter-spacing:.28em;text-transform:uppercase;
+  color:var(--gold);text-align:center;margin-bottom:14px;
+  opacity:.85;
+}
+
+.card{
+  background:var(--card);
+  backdrop-filter:blur(22px);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:46px 34px 36px;
+  box-shadow:0 30px 80px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.04);
+  text-align:center;
+  position:relative;
+}
+.card::before{
+  content:"";position:absolute;inset:9px;border:1px solid rgba(211,164,79,.14);
+  border-radius:12px;pointer-events:none;
+}
+
+h1{
+  font-family:'Fraunces',serif;
+  font-style:italic;font-weight:500;
+  font-size:clamp(30px,7vw,42px);
+  line-height:1.1;
+  margin-bottom:10px;
+  color:var(--ink);
+}
+h1 .amp{color:var(--gold-bright);font-style:normal}
+
+.subtitle{
+  color:var(--ink-dim);
+  font-size:14.5px;
+  margin-bottom:34px;
+  line-height:1.6;
+  max-width:340px;margin-left:auto;margin-right:auto;
+}
+
+/* ---- inputs ---- */
+.field{margin-bottom:22px;text-align:left}
+.field label{
+  display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-faint);margin-bottom:10px;text-align:center;
+}
+input,textarea{
+  width:100%;border:0;border-bottom:1px solid var(--line);
+  background:transparent;color:var(--ink);
+  font:15px 'Inter',sans-serif;padding:10px 4px;outline:none;
+  transition:border-color .3s;text-align:center;
+}
+input::placeholder,textarea::placeholder{color:var(--ink-faint)}
+input:focus,textarea:focus{border-color:var(--gold-bright)}
+textarea{resize:vertical;min-height:96px;text-align:left;line-height:1.6}
+
+/* ---- wax seal button ---- */
+.seal-wrap{display:flex;justify-content:center;margin:8px 0 6px}
+.seal{
+  width:78px;height:78px;border-radius:50%;
+  background:radial-gradient(circle at 32% 28%, var(--gold-bright), var(--gold) 55%, #9c7530 100%);
+  border:0;cursor:pointer;position:relative;
+  box-shadow:0 10px 26px rgba(211,164,79,.28), inset 0 2px 4px rgba(255,255,255,.35), inset 0 -3px 6px rgba(0,0,0,.25);
+  display:flex;align-items:center;justify-content:center;
+  transition:transform .2s;
+  font-family:'Fraunces',serif;font-style:italic;font-size:22px;color:#3a2a10;
+}
+.seal:hover{transform:scale(1.05)}
+.seal:active{transform:scale(.95)}
+.seal-label{
+  margin-top:14px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-faint);
+}
+
+.error{color:var(--rose);font-size:13px;min-height:20px;margin-top:14px;letter-spacing:.02em}
+
+.small{
+  font-size:11.5px;color:var(--ink-faint);margin-top:30px;
+  letter-spacing:.04em;
+}
+
+.hidden{display:none!important}
+
+/* ---- progress ---- */
+.progress-track{
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  margin-bottom:30px;
+}
+.dot{width:6px;height:6px;border-radius:50%;background:rgba(244,236,221,.18);transition:.3s}
+.dot.done{background:var(--gold-bright);box-shadow:0 0 8px rgba(232,194,116,.6)}
+.dot.current{background:var(--ink);width:8px;height:8px}
+
+.question{
+  font-family:'Fraunces',serif;font-weight:500;
+  font-size:clamp(19px,4.6vw,23px);
+  line-height:1.45;margin:0 0 26px;color:var(--ink);
+}
+
+.answers{display:grid;gap:10px;margin-bottom:22px}
+.answer{
+  background:transparent;color:var(--ink-dim);
+  border:1px solid var(--line);border-radius:30px;
+  padding:13px 20px;text-align:center;font:500 14px 'Inter',sans-serif;
+  cursor:pointer;transition:.2s;
+}
+.answer:hover{border-color:var(--gold-bright);color:var(--ink);background:rgba(211,164,79,.06)}
+
+.nav{display:flex;justify-content:center;gap:14px;align-items:center;margin-top:6px}
+
+button.btn{
+  border:0;background:transparent;color:var(--gold-bright);
+  font:600 13px 'Inter',sans-serif;letter-spacing:.06em;text-transform:uppercase;
+  cursor:pointer;padding:10px 6px;position:relative;
+}
+button.btn.primary{color:var(--night-3);background:linear-gradient(135deg,var(--gold-bright),var(--gold));
+  padding:12px 26px;border-radius:30px;box-shadow:0 8px 20px rgba(211,164,79,.25);
+}
+button.btn.primary:hover{transform:translateY(-1px)}
+button.btn.ghost{color:var(--ink-faint)}
+button.btn.ghost:hover{color:var(--ink)}
+
+/* ---- final letter ---- */
+#final .card{text-align:left}
+#final .eyebrow{text-align:center}
+#final h1{text-align:center}
+.dropcap:first-letter{
+  font-family:'Fraunces',serif;font-size:52px;font-style:italic;
+  float:left;line-height:.8;margin:6px 10px 0 0;color:var(--gold-bright);
+}
+.final-message{
+  line-height:1.85;font-size:15px;color:var(--ink-dim);
+  margin:8px 0 6px;
+}
+.signature{
+  margin-top:22px;text-align:right;
+  font-family:'Parisienne',cursive;font-size:30px;color:var(--gold-bright);
+}
+.wax-stamp{
+  width:46px;height:46px;border-radius:50%;margin-left:auto;margin-top:-6px;
+  background:radial-gradient(circle at 35% 30%, var(--rose), #6f2f3a 70%);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Fraunces',serif;font-style:italic;font-size:16px;color:rgba(255,255,255,.85);
+  box-shadow:0 6px 14px rgba(0,0,0,.35), inset 0 2px 3px rgba(255,255,255,.2);
+}
+
+.reveal-btn{display:flex;justify-content:center;margin-top:28px}
+.extra{
+  margin-top:20px;padding-top:22px;border-top:1px solid var(--line);
+}
+.fade{animation:fade .5s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+@media (max-width:380px){
+  .card{padding:36px 22px 28px}
+}
+</style>
+</head>
+<body>
+
+<div class="sky" id="sky"></div>
+
+<div class="container">
+
+  <section class="card" id="login">
+    <p class="eyebrow">A private letter</p>
+    <h1>Our Little World</h1>
+    <p class="subtitle">A tiny place made just for you, Mero 7abibty — sealed until you open it.</p>
+
+    <div class="field">
+      <label for="password">Enter our secret password</label>
+      <input id="password" type="password" placeholder="•••••">
+    </div>
+
+    <div class="seal-wrap">
+      <button class="seal" onclick="enterWorld()" aria-label="Break the seal">❤</button>
+    </div>
+    <div class="seal-label">Break the seal</div>
+    <div class="error" id="error"></div>
+
+    <p class="small">Made with love by Ahmed Abdelgawad</p>
+  </section>
+
+  <section class="card hidden" id="quiz">
+    <p class="eyebrow">Welcome, Mero 7abibty</p>
+    <h1 style="font-size:26px">Let's see how well<br>you know our story</h1>
+    <div id="questionBox" style="margin-top:26px"></div>
+  </section>
+
+  <section class="card hidden" id="final">
+    <p class="eyebrow">You reached the end</p>
+    <h1>For you<span class="amp"> &amp;</span> only you</h1>
+
+    <div class="final-message dropcap">
+      No matter how many questions I ask you, there will never be enough
+      questions to describe how much you mean to me.
+      Every little moment with you becomes a memory I want to keep forever.
+      I don't need a perfect story — I just want our story, with all its
+      laughs, silly moments, arguments, and beautiful days.
+    </div>
+    <div class="signature">Ahmed Abdelgawad</div>
+    <div class="wax-stamp">A&amp;M</div>
+
+    <div class="reveal-btn">
+      <button class="btn primary" onclick="reveal()">One More Thing</button>
+    </div>
+
+    <div id="extra" class="extra hidden fade">
+      <p class="final-message">
+        If I had to choose you again, I would choose you every single time.
+        Thank you for being part of my life.
+      </p>
+      <p class="final-message" style="color:var(--ink);font-weight:500">
+        You're not just my favorite person… you're my favorite part of every day.
+      </p>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* =========================
+   EASY SETTINGS TO EDIT
+   ========================= */
+const PASSWORD = "552006";
+const GIRLFRIEND_NAME = "Mero 7abibty";
+
+// Google Apps Script Web App URL
+const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbz0WxB0EiVJfKMbYUcT9fzeYG8lc4GKWKwiplfbGrKaaFPzRv57qD7Y5aJrGtxN66oiwA/exec";
+
+const questions = [
+  { q:"What was the first thing you noticed about Ahmed?", type:"text" },
+  { q:"What is your favorite memory with Ahmed?", type:"text" },
+  { q:"What is the thing you love most about Ahmed?", type:"text" },
+  { q:"Who gets jealous more?", type:"choice",
+    options:["Ahmed","Mero","Both of us","Neither… we're angels"] },
+  { q:"What is our funniest memory?", type:"text" },
+  { q:"If we could travel anywhere together, where would you choose?", type:"text" },
+  { q:"What is one thing you want us to do together in the future?", type:"text" },
+  { q:"Describe our relationship in three words.", type:"text" }
+];
+
+let current = 0;
+let answers = [];
+
+function enterWorld(){
+  const value = document.getElementById("password").value;
+  const error = document.getElementById("error");
+  if(value === PASSWORD){
+    document.getElementById("login").classList.add("hidden");
+    document.getElementById("quiz").classList.remove("hidden");
+    renderQuestion();
+  }else{
+    error.textContent = "Oops! Try again, my love.";
+  }
+}
+
+document.getElementById("password").addEventListener("keydown",e=>{
+  if(e.key==="Enter") enterWorld();
+});
+
+function renderProgress(){
+  let html = `<div class="progress-track">`;
+  questions.forEach((_,i)=>{
+    let cls = "dot";
+    if(i < current) cls += " done";
+    else if(i === current) cls += " current";
+    html += `<span class="${cls}"></span>`;
+  });
+  html += `</div>`;
+  return html;
+}
+
+function renderQuestion(){
+  const item = questions[current];
+  const box = document.getElementById("questionBox");
+  let html = `<div class="fade">`;
+  html += renderProgress();
+  html += `<div class="question">${item.q}</div>`;
+
+  if(item.type === "text"){
+    html += `<textarea id="answer" placeholder="Write your answer here...">${answers[current]||""}</textarea>`;
+  }else{
+    html += `<div class="answers">`;
+    item.options.forEach((opt,i)=>{
+      html += `<button class="answer" onclick="choose(${i})">${opt}</button>`;
+    });
+    html += `</div>`;
+  }
+
+  html += `<div class="nav">`;
+  if(current > 0) html += `<button class="btn ghost" onclick="previous()">← Back</button>`;
+  if(item.type === "text") html += `<button class="btn primary" onclick="next()">Next</button>`;
+  html += `</div></div>`;
+  box.innerHTML = html;
+}
+
+function choose(i){
+  answers[current] = questions[current].options[i];
+  next();
+}
+
+function next(){
+  const input = document.getElementById("answer");
+  if(input && !input.value.trim()){
+    input.style.borderColor = "#b45a68";
+    input.focus();
+    return;
+  }
+  if(input) answers[current] = input.value.trim();
+
+  if(current < questions.length-1){
+    current++;
+    renderQuestion();
+  }else{
+    submitAnswers();
+  }
+}
+
+function previous(){
+  if(current > 0){ current--; renderQuestion(); }
+}
+
+async function submitAnswers(){
+  const box = document.getElementById("questionBox");
+  box.innerHTML = `
+    <div class="fade" style="padding:20px 0">
+      <div class="question" style="margin-bottom:6px">Sending your answers…</div>
+      <p class="subtitle" style="margin-bottom:0">Just a little moment.</p>
+    </div>`;
+
+  const payload = {
+    name: GIRLFRIEND_NAME,
+    q1: answers[0] || "",
+    q2: answers[1] || "",
+    q3: answers[2] || "",
+    q4: answers[3] || "",
+    q5: answers[4] || "",
+    q6: answers[5] || "",
+    q7: answers[6] || "",
+    q8: answers[7] || ""
+  };
+
+  try {
+    const form = new URLSearchParams();
+    Object.entries(payload).forEach(([key, value]) => form.append(key, value));
+
+    await fetch(GOOGLE_SHEET_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: {"Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"},
+      body: form.toString()
+    });
+
+    document.getElementById("quiz").classList.add("hidden");
+    document.getElementById("final").classList.remove("hidden");
+  } catch (err) {
+    box.innerHTML = `
+      <div class="fade" style="padding:20px 0">
+        <div class="question" style="margin-bottom:6px">Something went wrong</div>
+        <p class="subtitle" style="margin-bottom:18px">Please try sending the answers again.</p>
+        <button class="btn primary" onclick="submitAnswers()">Try Again</button>
+      </div>`;
+  }
+}
+
+function reveal(){
+  document.getElementById("extra").classList.remove("hidden");
+}
+
+/* ---- starfield generation ---- */
+const skyEl = document.getElementById("sky");
+for(let i=0;i<70;i++){
+  const s = document.createElement("div");
+  s.className = "star";
+  const size = (Math.random()*1.6 + 0.6).toFixed(2);
+  s.style.width = size + "px";
+  s.style.height = size + "px";
+  s.style.left = Math.random()*100 + "%";
+  s.style.top = Math.random()*100 + "%";
+  s.style.animationDuration = (2.5 + Math.random()*4) + "s";
+  s.style.animationDelay = (Math.random()*4) + "s";
+  skyEl.appendChild(s);
+}
+</script>
+</body>
+</html>
